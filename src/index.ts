@@ -1,9 +1,50 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { logger } from "hono/logger";
+import { cors } from "hono/cors";
+import { prettyJSON } from "hono/pretty-json";
+import studentRoutes from "./Routes/student.routes";
 
-const app = new Hono()
+const app = new Hono();
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.use("*", logger());
+app.use("*", cors());
+app.use("*", prettyJSON());
 
-export default app
+app.get("/", (c) => {
+    return c.json({
+        success: true,
+        message: "Student CRUD API",
+        version: "1.0.0",
+        endpoints: {
+            getAll: "GET    /students",
+        },
+    });
+});
+
+app.route("/students", studentRoutes);
+
+app.notFound((c) => {
+    return c.json(
+        {
+            success: false,
+            message: `La route "${c.req.method} ${c.req.path}" n'existe pas.`,
+            hint: "Consultez GET / pour voir les endpoints disponibles.",
+        },
+        404,
+    );
+});
+
+app.onError((err, c) => {
+    console.error("[ERROR]", err);
+    return c.json(
+        {
+            success: false,
+            message: "Une erreur interne est survenue.",
+        },
+        500,
+    );
+});
+
+console.log("🚀 Serveur démarré sur http://localhost:3000");
+
+export default app;
