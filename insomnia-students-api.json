@@ -1,0 +1,113 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2026-03-19T12:00:00.000Z",
+    "resources": [
+        {
+            "_id": "wrk_students_api",
+            "parentId": null,
+            "name": "Students API",
+            "_type": "workspace"
+        },
+        {
+            "_id": "env_base",
+            "parentId": "wrk_students_api",
+            "name": "Base Environment",
+            "data": {
+                "base_url": "http://localhost:3000"
+            },
+            "dataPropertyOrder": {
+                "&": ["base_url"]
+            },
+            "_type": "environment"
+        },
+        {
+            "_id": "req_get_all",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students",
+            "name": "1. GET Tous les étudiants",
+            "method": "GET",
+            "body": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_get_id",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students/1",
+            "name": "2. GET Étudiant par ID",
+            "method": "GET",
+            "body": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_post",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students",
+            "name": "3. POST Créer un étudiant",
+            "method": "POST",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"firstName\": \"Jean\",\n  \"lastName\": \"Dupont\",\n  \"email\": \"jean.dupont@example.com\",\n  \"grade\": 15.5,\n  \"field\": \"Informatique\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "_type": "request"
+        },
+        {
+            "_id": "req_put",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students/1",
+            "name": "4. PUT Modifier un étudiant",
+            "method": "PUT",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n  \"firstName\": \"Jean-Marie\",\n  \"lastName\": \"Dupont\",\n  \"email\": \"jm.dupont@example.com\",\n  \"grade\": 18,\n  \"field\": \"Mathématiques\"\n}"
+            },
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "_type": "request"
+        },
+        {
+            "_id": "req_delete",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students/1",
+            "name": "5. DELETE Supprimer un étudiant",
+            "method": "DELETE",
+            "body": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_stats",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students/stats",
+            "name": "6. GET Statistiques",
+            "method": "GET",
+            "body": {},
+            "_type": "request"
+        },
+        {
+            "_id": "req_search",
+            "parentId": "wrk_students_api",
+            "url": "{{ _.base_url }}/students/search",
+            "name": "7. GET Recherche",
+            "method": "GET",
+            "parameters": [
+                {
+                    "name": "q",
+                    "value": "Jean",
+                    "disabled": false
+                }
+            ],
+            "body": {},
+            "_type": "request"
+        }
+    ]
+}
