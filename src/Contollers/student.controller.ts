@@ -7,6 +7,7 @@ import {
 import { studentService } from "../services/student.service";
 import {
     renderStudentList,
+    renderPaginatedStudentList,
     renderStudent,
     renderCreated,
     renderUpdated,
@@ -31,7 +32,64 @@ function formatZodErrors(error: ZodError): Record<string, string[]> {
 export async function getAllStudents(c: Context) {
     try {
         const students = studentService.findAll();
-        return c.json(renderStudentList(students));
+
+        const pageParam = c.req.query("page");
+        const limitParam = c.req.query("limit");
+        const sortParam = c.req.query("sort");
+        const orderParam = c.req.query("order");
+
+        const page =
+            pageParam === undefined || pageParam === ""
+                ? 1
+                : Number.parseInt(pageParam, 10);
+        const limit =
+            limitParam === undefined || limitParam === ""
+                ? 10
+                : Number.parseInt(limitParam, 10);
+
+        if (
+            Number.isNaN(page) ||
+            Number.isNaN(limit) ||
+            !Number.isInteger(page) ||
+            !Number.isInteger(limit) ||
+            page <= 0 ||
+            limit <= 0
+        ) {
+            return c.json(
+                renderBadRequest(
+                    "Les paramètres 'page' et 'limit' doivent être des entiers positifs.",
+                ),
+                400,
+            );
+        }
+
+        const order = orderParam?.toLowerCase() === "asc" ? "asc" : "desc";
+        const shouldSortByGrade =
+            sortParam?.toLowerCase() === "grade" || sortParam === undefined;
+
+        const sortedStudents = shouldSortByGrade
+            ? [...students].sort((a, b) =>
+                  order === "asc" ? a.grade - b.grade : b.grade - a.grade,
+              )
+            : students;
+
+        const total = sortedStudents.length;
+        const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
+        const start = (page - 1) * limit;
+        const end = start + limit;
+
+        const paginated = sortedStudents.slice(start, end);
+
+        return c.json(
+            renderPaginatedStudentList(paginated, {
+                page,
+                limit,
+                total,
+                totalPages,
+                hasNext: totalPages === 0 ? false : page < totalPages,
+                hasPrev: totalPages === 0 ? false : page > 1,
+            }),
+        );
     } catch {
         return c.json(renderServerError(), 500);
     }

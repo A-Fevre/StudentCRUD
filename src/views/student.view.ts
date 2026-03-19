@@ -5,6 +5,19 @@ export interface ApiSuccess<T> {
     data: T;
 }
 
+export interface PaginationMeta {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+}
+
+export interface PaginatedSuccess<T> extends ApiSuccess<T> {
+    pagination: PaginationMeta;
+}
+
 export interface ApiError {
     success: false;
     message: string;
@@ -22,6 +35,17 @@ export function renderStudentList(students: Student[]): ApiSuccess<Student[]> {
     return {
         success: true,
         data: students,
+    };
+}
+
+export function renderPaginatedStudentList(
+    students: Student[],
+    meta: PaginationMeta,
+): PaginatedSuccess<Student[]> {
+    return {
+        success: true,
+        data: students,
+        pagination: meta,
     };
 }
 
