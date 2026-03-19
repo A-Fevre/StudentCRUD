@@ -93,7 +93,7 @@ describe("GET /students/:id", () => {
     it("3. id valide doit renvoyer le statut 200 et l'étudiant correspondant", async () => {
         const res = await app.request("/students/1");
 
-        expect(res.status).toBe(500);
+        expect(res.status).toBe(200);
 
         const body = await res.json();
         expect(body).toHaveProperty("data");
