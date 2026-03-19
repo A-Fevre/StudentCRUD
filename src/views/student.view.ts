@@ -25,10 +25,34 @@ export function renderStudent(student: Student): ApiSuccess<Student> {
     };
 }
 
+export function renderCreated(student: Student): ApiSuccess<Student> {
+    return {
+        success: true,
+        data: student,
+    };
+}
+
+export function renderValidationError(
+    errors: Record<string, string[]>,
+): ApiError {
+    return {
+        success: false,
+        message: "Les données fournies sont invalides.",
+        errors,
+    };
+}
+
 export function renderNotFound(id: number): ApiError {
     return {
         success: false,
         message: `Aucun étudiant trouvé avec l'id ${id}.`,
+    };
+}
+
+export function renderConflict(email: string): ApiError {
+    return {
+        success: false,
+        message: `L'email "${email}" est déjà utilisé par un autre étudiant.`,
     };
 }
 

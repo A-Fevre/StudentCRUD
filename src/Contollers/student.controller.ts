@@ -1,13 +1,29 @@
 import type { Context } from "hono";
-import { StudentIdSchema } from "../schemas/student.schema";
+import { ZodError } from "zod";
+import {
+    StudentIdSchema,
+    CreateStudentSchema,
+} from "../schemas/student.schema";
 import { studentService } from "../services/student.service";
 import {
     renderStudentList,
     renderStudent,
+    renderCreated,
     renderNotFound,
+    renderValidationError,
+    renderConflict,
     renderBadRequest,
     renderServerError,
 } from "../views/student.view";
+
+function formatZodErrors(error: ZodError): Record<string, string[]> {
+    return error.issues.reduce<Record<string, string[]>>((acc, issue) => {
+        const key = issue.path.join(".") || "general";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(issue.message);
+        return acc;
+    }, {});
+}
 
 export async function getAllStudents(c: Context) {
     try {
@@ -37,6 +53,39 @@ export async function getStudentById(c: Context) {
 
         return c.json(renderStudent(student));
     } catch {
+        return c.json(renderServerError(), 500);
+    }
+}
+
+export async function createStudent(c: Context) {
+    try {
+        const body = await c.req.json().catch(() => null);
+
+        if (body === null) {
+            return c.json(
+                renderBadRequest(
+                    "Le corps de la requête n'est pas un JSON valide.",
+                ),
+                400,
+            );
+        }
+
+        const parsed = CreateStudentSchema.safeParse(body);
+
+        if (!parsed.success) {
+            return c.json(
+                renderValidationError(formatZodErrors(parsed.error)),
+                400,
+            );
+        }
+
+        const student = studentService.create(parsed.data);
+        return c.json(renderCreated(student), 201);
+    } catch (err) {
+        if (err instanceof Error && err.message === "EMAIL_CONFLICT") {
+            const email = (await c.req.json().catch(() => ({})))?.email ?? "";
+            return c.json(renderConflict(email), 409);
+        }
         return c.json(renderServerError(), 500);
     }
 }
