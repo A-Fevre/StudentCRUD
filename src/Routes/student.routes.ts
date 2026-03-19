@@ -5,11 +5,13 @@ import {
     createStudent,
     updateStudent,
     deleteStudent,
+    getStudentStats,
 } from "../Contollers/student.controller";
 
 const studentRoutes = new Hono();
 
 studentRoutes.get("/", getAllStudents);
+studentRoutes.get("/stats", getStudentStats);
 studentRoutes.get("/:id", getStudentById);
 studentRoutes.post("/", createStudent);
 studentRoutes.put("/:id", updateStudent);

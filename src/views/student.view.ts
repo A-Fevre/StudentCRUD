@@ -11,6 +11,13 @@ export interface ApiError {
     errors?: Record<string, string[]>;
 }
 
+export interface StatsResponse {
+    totalStudents: number;
+    averageGrade: number;
+    studentsByField: Record<string, number>;
+    bestStudent: Student | null;
+}
+
 export function renderStudentList(students: Student[]): ApiSuccess<Student[]> {
     return {
         success: true,
@@ -46,6 +53,10 @@ export function renderDeleted(id: number): ApiSuccess<{ message: string }> {
             message: `L'étudiant avec l'id ${id} a été supprimé avec succès.`,
         },
     };
+}
+
+export function renderStats(stats: StatsResponse): StatsResponse {
+    return stats;
 }
 
 export function renderValidationError(

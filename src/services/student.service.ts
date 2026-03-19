@@ -85,6 +85,41 @@ export class StudentService {
 
         return true;
     }
+
+    getStats() {
+        const students = readStudents();
+
+        const totalStudents = students.length;
+
+        const averageGrade =
+            totalStudents > 0
+                ? Math.round(
+                      (students.reduce((sum, s) => sum + s.grade, 0) /
+                          totalStudents) *
+                          100,
+                  ) / 100
+                : 0;
+
+        const studentsByField = students.reduce<Record<string, number>>(
+            (acc, s) => {
+                acc[s.field] = (acc[s.field] ?? 0) + 1;
+                return acc;
+            },
+            {},
+        );
+
+        const bestStudent = students.reduce<Student | null>((best, s) => {
+            if (!best || s.grade > best.grade) return s;
+            return best;
+        }, null);
+
+        return {
+            totalStudents,
+            averageGrade,
+            studentsByField,
+            bestStudent,
+        };
+    }
 }
 
 export const studentService = new StudentService();

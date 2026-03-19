@@ -11,6 +11,7 @@ import {
     renderCreated,
     renderUpdated,
     renderDeleted,
+    renderStats,
     renderNotFound,
     renderValidationError,
     renderConflict,
@@ -31,6 +32,15 @@ export async function getAllStudents(c: Context) {
     try {
         const students = studentService.findAll();
         return c.json(renderStudentList(students));
+    } catch {
+        return c.json(renderServerError(), 500);
+    }
+}
+
+export async function getStudentStats(c: Context) {
+    try {
+        const stats = studentService.getStats();
+        return c.json(renderStats(stats), 200);
     } catch {
         return c.json(renderServerError(), 500);
     }
