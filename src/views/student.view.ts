@@ -32,6 +32,13 @@ export function renderCreated(student: Student): ApiSuccess<Student> {
     };
 }
 
+export function renderUpdated(student: Student): ApiSuccess<Student> {
+    return {
+        success: true,
+        data: student,
+    };
+}
+
 export function renderValidationError(
     errors: Record<string, string[]>,
 ): ApiError {

@@ -47,6 +47,32 @@ export class StudentService {
 
         return newStudent;
     }
+    update(id: number, dto: CreateStudentDto): Student | undefined {
+        const students = readStudents();
+        const index = students.findIndex((s) => s.id === id);
+
+        if (index === -1) return undefined;
+
+        const emailConflict = students.find(
+            (s) =>
+                s.email.toLowerCase() === dto.email.toLowerCase() &&
+                s.id !== id,
+        );
+        if (emailConflict) {
+            throw new Error("EMAIL_CONFLICT");
+        }
+
+        const updated: Student = {
+            ...dto,
+            id,
+            email: dto.email.toLowerCase(),
+        };
+
+        students[index] = updated;
+        writeStudents(students);
+
+        return updated;
+    }
 }
 
 export const studentService = new StudentService();
