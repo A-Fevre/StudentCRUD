@@ -96,6 +96,6 @@ bun run lint:fix
 
 Le pipeline GitHub Actions s'exécute à chaque push sur `main`.
 
-![Workflow](https://github.com/A-Fevre/StudentCRUD/actions/workflows/WORKFLOW-FILE/badge.svg)
+![Workflow Status](https://img.shields.io/github/workflow/status/A-Fevre/StudentCRUD/CI?label=Workflow%20Status&logo=github&event=push)
 
 ---
