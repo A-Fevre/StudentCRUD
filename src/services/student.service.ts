@@ -17,6 +17,9 @@ export class StudentService {
     findAll(): Student[] {
         return readStudents();
     }
+    findById(id: number): Student | undefined {
+        return readStudents().find((s) => s.id === id);
+    }
 }
 
 export const studentService = new StudentService();

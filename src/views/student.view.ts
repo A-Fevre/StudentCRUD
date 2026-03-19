@@ -18,6 +18,27 @@ export function renderStudentList(students: Student[]): ApiSuccess<Student[]> {
     };
 }
 
+export function renderStudent(student: Student): ApiSuccess<Student> {
+    return {
+        success: true,
+        data: student,
+    };
+}
+
+export function renderNotFound(id: number): ApiError {
+    return {
+        success: false,
+        message: `Aucun étudiant trouvé avec l'id ${id}.`,
+    };
+}
+
+export function renderBadRequest(message: string): ApiError {
+    return {
+        success: false,
+        message,
+    };
+}
+
 export function renderServerError(): ApiError {
     return {
         success: false,
