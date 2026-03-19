@@ -1,5 +1,5 @@
 {
-    "name": "StudentCRUD",
+    "name": "student-crud",
     "scripts": {
         "dev": "bun run --hot src/index.ts",
         "test": "vitest run",
