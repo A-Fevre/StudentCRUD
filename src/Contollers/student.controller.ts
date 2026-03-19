@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import { ZodError } from "zod";
+import type { ZodError } from "zod";
 import {
     StudentIdSchema,
     CreateStudentSchema,

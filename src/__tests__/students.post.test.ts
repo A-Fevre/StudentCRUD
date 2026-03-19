@@ -94,7 +94,7 @@ describe("POST /students", () => {
     });
 
     it("7. champ obligatoire manquant doit renvoyer 400", async () => {
-        const { lastName, ...payloadSansNom } = validPayload;
+        const { lastName: _lastName, ...payloadSansNom } = validPayload;
 
         const res = await postStudent(payloadSansNom);
 
