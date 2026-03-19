@@ -10,12 +10,18 @@ jobs:
     build-and-test:
         name: Build and Test
         runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                bun-version: ["1.2", "1.3"]
         steps:
             - name: Checkout du code
               uses: actions/checkout@v4
 
             - name: Install Bun
               uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: ${{ matrix.bun-version }}
 
             - name: Installation des dépendances
               run: bun ci
@@ -27,18 +33,11 @@ jobs:
               run: bun run test:coverage
 
             - name: Coverage Summary
-              run: |
-                  node -e "const fs=require('fs');const p='coverage/coverage-summary.json';if(!fs.existsSync(p)){console.log('No coverage summary found');process.exit(0);}const s=JSON.parse(fs.readFileSync(p,'utf8')).total;const f=(n)=>`${n}%`;const md=[
-                    '## Coverage',
-                    '',
-                    '| Metric | % | Covered | Total |',
-                    '| --- | --- | --- | --- |',
-                    `| Lines | ${f(s.lines.pct)} | ${s.lines.covered} | ${s.lines.total} |`,
-                    `| Statements | ${f(s.statements.pct)} | ${s.statements.covered} | ${s.statements.total} |`,
-                    `| Functions | ${f(s.functions.pct)} | ${s.functions.covered} | ${s.functions.total} |`,
-                    `| Branches | ${f(s.branches.pct)} | ${s.branches.covered} | ${s.branches.total} |`,
-                    '',
-                  ].join('\\n');fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);"
+              if: matrix.bun-version == '1.2'
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-summary
+                  path: coverage/coverage-summary.json
 
             - name: Build
               run: bun run build
