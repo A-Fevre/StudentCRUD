@@ -74,7 +74,11 @@ describe("GET /students", () => {
 
         expect(body.data).toHaveLength(testStudents.length);
 
-        testStudents.forEach((expected, index) => {
+        const expectedSorted = [...testStudents].sort(
+            (a, b) => b.grade - a.grade,
+        );
+
+        expectedSorted.forEach((expected, index) => {
             expect(body.data[index].id).toBe(expected.id);
             expect(body.data[index].firstName).toBe(expected.firstName);
             expect(body.data[index].lastName).toBe(expected.lastName);

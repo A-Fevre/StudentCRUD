@@ -89,6 +89,19 @@ describe("GET /students/stats", () => {
         expect(body.bestStudent.id).toBe(2);
         expect(body.bestStudent.grade).toBe(18.0);
     });
+
+    it("25. liste vide doit renvoyer des stats par defaut", async () => {
+        vi.mocked(readFileSync).mockReturnValue(JSON.stringify([]));
+
+        const res = await app.request("/students/stats");
+        expect(res.status).toBe(200);
+
+        const body = await res.json();
+        expect(body.totalStudents).toBe(0);
+        expect(body.averageGrade).toBe(0);
+        expect(body.studentsByField).toEqual({});
+        expect(body.bestStudent).toBe(null);
+    });
 });
 
 describe("GET /students/search", () => {
@@ -114,6 +127,49 @@ describe("GET /students/search", () => {
         expect(bodyCaseInsensitive.data[0].firstName).toBe("Lucas");
 
         const resEmpty = await app.request("/students/search");
+        expect(resEmpty.status).toBe(400);
+    });
+
+    it("22. caracteres speciaux doivent etre pris en charge", async () => {
+        const specialStudents = [
+            ...testStudents,
+            {
+                id: 6,
+                firstName: "Jean-Luc",
+                lastName: "D'Artagnan",
+                email: "jeanluc.dartagnan@test.fr",
+                grade: 11.0,
+                field: "informatique",
+            },
+        ];
+        vi.mocked(readFileSync).mockReturnValue(
+            JSON.stringify(specialStudents),
+        );
+
+        const resHyphen = await app.request("/students/search?q=jean-lu");
+        expect(resHyphen.status).toBe(200);
+        const bodyHyphen = await resHyphen.json();
+        expect(bodyHyphen.data).toHaveLength(1);
+        expect(bodyHyphen.data[0].firstName).toBe("Jean-Luc");
+
+        const resApostrophe = await app.request("/students/search?q=artagnan");
+        expect(resApostrophe.status).toBe(200);
+        const bodyApostrophe = await resApostrophe.json();
+        expect(bodyApostrophe.data).toHaveLength(1);
+        expect(bodyApostrophe.data[0].lastName).toBe("D'Artagnan");
+
+        const resAccent = await app.request("/students/search?q=chloé");
+        expect(resAccent.status).toBe(200);
+        const bodyAccent = await resAccent.json();
+        expect(bodyAccent.data).toHaveLength(1);
+        expect(bodyAccent.data[0].firstName).toBe("Chloé");
+    });
+
+    it("26. q vide ou espaces doit renvoyer 400", async () => {
+        const resSpaces = await app.request("/students/search?q=   ");
+        expect(resSpaces.status).toBe(400);
+
+        const resEmpty = await app.request("/students/search?q=");
         expect(resEmpty.status).toBe(400);
     });
 });

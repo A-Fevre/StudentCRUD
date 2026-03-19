@@ -138,4 +138,30 @@ describe("POST /students", () => {
 
         expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled();
     });
+
+    it("27. email existant avec casse differente doit renvoyer 409", async () => {
+        const res = await postStudent({
+            ...validPayload,
+            email: testStudents[0].email.toUpperCase(),
+        });
+
+        expect(res.status).toBe(409);
+
+        const body = await res.json();
+        expect(body.success).toBe(false);
+        expect(body.message).toContain(testStudents[0].email.toUpperCase());
+    });
+
+    it("28. JSON invalide doit renvoyer 400", async () => {
+        const res = await app.request("/students", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{",
+        });
+
+        expect(res.status).toBe(400);
+
+        const body = await res.json();
+        expect(body.success).toBe(false);
+    });
 });

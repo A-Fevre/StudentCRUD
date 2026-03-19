@@ -3,11 +3,11 @@
     "scripts": {
         "build": "bun build ./src/index.ts --outdir dist",
         "dev": "bun run --hot src/index.ts",
-        "test": "vitest run",
-        "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage",
-        "lint": "eslint src",
-        "lint:fix": "eslint src --fix"
+        "test": "bunx vitest run",
+        "test:watch": "bunx vitest",
+        "test:coverage": "bunx vitest run --coverage",
+        "lint": "node node_modules/eslint/bin/eslint.js src",
+        "lint:fix": "node node_modules/eslint/bin/eslint.js src --fix"
     },
     "dependencies": {
         "@hono/swagger-ui": "^0.6.1",

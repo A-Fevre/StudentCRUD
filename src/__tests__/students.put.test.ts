@@ -101,4 +101,27 @@ describe("PUT /students/:id", () => {
         expect(body.message).toContain("999");
         expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled();
     });
+
+    it("29. ID invalide doit renvoyer 400", async () => {
+        const res = await putStudent("abc", validPayload);
+
+        expect(res.status).toBe(400);
+
+        const body = await res.json();
+        expect(body.success).toBe(false);
+    });
+
+    it("30. email deja utilise par un autre etudiant doit renvoyer 409", async () => {
+        const res = await putStudent(1, {
+            ...validPayload,
+            email: testStudents[1].email,
+        });
+
+        expect(res.status).toBe(409);
+
+        const body = await res.json();
+        expect(body.success).toBe(false);
+        expect(body.message).toContain(testStudents[1].email);
+        expect(vi.mocked(writeFileSync)).not.toHaveBeenCalled();
+    });
 });
