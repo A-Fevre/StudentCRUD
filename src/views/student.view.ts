@@ -39,6 +39,15 @@ export function renderUpdated(student: Student): ApiSuccess<Student> {
     };
 }
 
+export function renderDeleted(id: number): ApiSuccess<{ message: string }> {
+    return {
+        success: true,
+        data: {
+            message: `L'étudiant avec l'id ${id} a été supprimé avec succès.`,
+        },
+    };
+}
+
 export function renderValidationError(
     errors: Record<string, string[]>,
 ): ApiError {

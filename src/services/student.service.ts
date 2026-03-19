@@ -73,6 +73,18 @@ export class StudentService {
 
         return updated;
     }
+
+    delete(id: number): boolean {
+        const students = readStudents();
+        const index = students.findIndex((s) => s.id === id);
+
+        if (index === -1) return false;
+
+        students.splice(index, 1);
+        writeStudents(students);
+
+        return true;
+    }
 }
 
 export const studentService = new StudentService();

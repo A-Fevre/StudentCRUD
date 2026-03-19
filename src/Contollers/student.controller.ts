@@ -10,6 +10,7 @@ import {
     renderStudent,
     renderCreated,
     renderUpdated,
+    renderDeleted,
     renderNotFound,
     renderValidationError,
     renderConflict,
@@ -134,6 +135,29 @@ export async function updateStudent(c: Context) {
             const email = (await c.req.json().catch(() => ({})))?.email ?? "";
             return c.json(renderConflict(email), 409);
         }
+        return c.json(renderServerError(), 500);
+    }
+}
+
+export async function deleteStudent(c: Context) {
+    try {
+        const parsed = StudentIdSchema.safeParse({ id: c.req.param("id") });
+
+        if (!parsed.success) {
+            return c.json(
+                renderBadRequest("L'id fourni n'est pas un nombre valide."),
+                400,
+            );
+        }
+
+        const deleted = studentService.delete(parsed.data.id);
+
+        if (!deleted) {
+            return c.json(renderNotFound(parsed.data.id), 404);
+        }
+
+        return c.json(renderDeleted(parsed.data.id), 200);
+    } catch {
         return c.json(renderServerError(), 500);
     }
 }
