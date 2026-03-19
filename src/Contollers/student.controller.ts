@@ -46,6 +46,26 @@ export async function getStudentStats(c: Context) {
     }
 }
 
+export async function searchStudents(c: Context) {
+    try {
+        const q = c.req.query("q");
+
+        if (!q || q.trim() === "") {
+            return c.json(
+                renderBadRequest(
+                    "Le paramètre de recherche 'q' est obligatoire et ne peut pas être vide.",
+                ),
+                400,
+            );
+        }
+
+        const students = studentService.search(q);
+        return c.json(renderStudentList(students), 200);
+    } catch {
+        return c.json(renderServerError(), 500);
+    }
+}
+
 export async function getStudentById(c: Context) {
     try {
         const parsed = StudentIdSchema.safeParse({ id: c.req.param("id") });

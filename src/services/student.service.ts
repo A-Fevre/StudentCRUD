@@ -120,6 +120,15 @@ export class StudentService {
             bestStudent,
         };
     }
+
+    search(q: string): Student[] {
+        const lower = q.toLowerCase().trim();
+        return readStudents().filter(
+            (s) =>
+                s.firstName.toLowerCase().includes(lower) ||
+                s.lastName.toLowerCase().includes(lower),
+        );
+    }
 }
 
 export const studentService = new StudentService();
